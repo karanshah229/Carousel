@@ -3,11 +3,13 @@ import {
 	ReactNode,
 	useContext,
 	useEffect,
-	useLayoutEffect,
 	useRef,
 	useState,
 } from "react";
 import { CarouselContext } from "./CarouselContextProvider";
+import { useInterval } from "./hooks/useInterval";
+import { useIsomorphicLayoutEffect } from "./hooks/useIsomorphicLayoutEffect";
+import { nextSlide } from "./utils";
 
 export function SlidesContainer({ children }: { children: ReactNode }) {
 	const direction = useRef("-"); // ref since we don't want to re-render the component
@@ -15,17 +17,22 @@ export function SlidesContainer({ children }: { children: ReactNode }) {
 		setTotalSlides,
 		rollOverEnabled,
 		currentSlideIndex,
+		setCurrentSlideIndex,
 		startingIndex,
 		carouselWidthInPixels,
+		autoSlide,
+		autoSlideInterval,
 	} = useContext(CarouselContext);
 
 	const [transformProperty, setTransformProperty] = useState(
 		`translateX(${startingIndex * carouselWidthInPixels}px)`
 	);
+	const [hoveredOnSlideContainer, setHoveredOnSlideContainer] =
+		useState(false);
 
 	const totalSlides = Children.count(children);
 
-	useLayoutEffect(() => {
+	useIsomorphicLayoutEffect(() => {
 		setTotalSlides(totalSlides);
 	}, [setTotalSlides, totalSlides]);
 
@@ -36,6 +43,18 @@ export function SlidesContainer({ children }: { children: ReactNode }) {
 		setTransformProperty(newTransformProperty);
 	}, [currentSlideIndex, rollOverEnabled, carouselWidthInPixels]);
 
+	useInterval(
+		() => {
+			nextSlide({
+				currentSlideIndex,
+				totalSlides,
+				rollOverEnabled,
+				setCurrentSlideIndex,
+			});
+		},
+		autoSlide && !hoveredOnSlideContainer ? autoSlideInterval : null
+	);
+
 	return (
 		<div
 			style={{
@@ -43,6 +62,8 @@ export function SlidesContainer({ children }: { children: ReactNode }) {
 				transform: transformProperty,
 				transition: "transform 300ms ease-out",
 			}}
+			onMouseOver={() => setHoveredOnSlideContainer(true)}
+			onMouseOut={() => setHoveredOnSlideContainer(false)}
 		>
 			{children}
 		</div>

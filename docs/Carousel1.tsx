@@ -52,7 +52,7 @@ function Indicators() {
 
 export function Carousel1() {
 	return (
-		<Carousel.Root widthInPixels={100}>
+		<Carousel.Root widthInPixels={100} autoSlide rollOverEnabled>
 			<Carousel.SlidesContainer>
 				{[
 					"Test me",

@@ -10,56 +10,9 @@
 4. Pause on Hover
 5. Vertical Carousel
 6. RollOver
+7. Dynamic Updates to Slides
+    1. Slide order changes with transition
 
 # Validations
 
 1. `Indicators` should only take 1 element as IndicatorComp Prop
-
-<!-- Indications old approach -->
-<!-- return (
-<>
-{[...Array(totalSlides).keys()].map((val, index) => {
-return (
-<span
-key={`carousel-indicator-${val}`}
-onClick={() => setCurrentSlideIndex(index)}
->
-{children}
-</span>
-);
-})}
-</>
-); -->
-
-<!-- TriggerPrev old approach -->
-<!-- export function TriggerPrev({
-	children,
-	as = "div",
-}: {
-	children: ReactNode;
-	as?: keyof JSX.IntrinsicElements;
-} & ComponentPropsWithoutRef<typeof as>) {
-	const ContainerTag = as;
-	const {
-		currentSlideIndex,
-		setCurrentSlideIndex,
-		totalSlides,
-		rollOverEnabled,
-	} = useContext(CarouselContext);
-
-	return (
-		<ContainerTag
-			onClick={() =>
-				prevSlide({
-					currentSlideIndex,
-					setCurrentSlideIndex,
-					totalSlides,
-					rollOverEnabled,
-				})
-			}
-			disabled={currentSlideIndex === 0 && !rollOverEnabled}
-		>
-			{children}
-		</ContainerTag>
-	);
-} -->

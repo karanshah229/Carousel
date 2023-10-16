@@ -14,6 +14,9 @@ type CarouselContextType = {
 	rollOverEnabled: boolean;
 	startingIndex: number;
 	carouselWidthInPixels: number;
+	autoSlide: boolean;
+	autoSlideInterval: number;
+	pauseOnHover: boolean;
 };
 
 export const CarouselContext = createContext<CarouselContextType>({
@@ -24,6 +27,9 @@ export const CarouselContext = createContext<CarouselContextType>({
 	rollOverEnabled: false,
 	startingIndex: 0,
 	carouselWidthInPixels: 0,
+	autoSlide: false,
+	autoSlideInterval: 3000,
+	pauseOnHover: true,
 });
 
 export function CarouselContextProvider({
@@ -33,6 +39,9 @@ export function CarouselContextProvider({
 	rollOverEnabled = false,
 	startingIndex = 0,
 	carouselWidthInPixels = 0,
+	autoSlide = false,
+	autoSlideInterval = 3000,
+	pauseOnHover = true,
 }: {
 	children: React.ReactNode;
 	currentSlideIndex?: number;
@@ -40,6 +49,9 @@ export function CarouselContextProvider({
 	rollOverEnabled?: boolean;
 	startingIndex?: number;
 	carouselWidthInPixels?: number;
+	autoSlide?: boolean;
+	autoSlideInterval?: number;
+	pauseOnHover?: boolean;
 }) {
 	const [currentSlideIndex, setCurrentSlideIndex] = useState(currIndex);
 	const [totalSlides, setTotalSlides] = useState(numberOfSlides);
@@ -53,6 +65,9 @@ export function CarouselContextProvider({
 			rollOverEnabled,
 			startingIndex,
 			carouselWidthInPixels,
+			autoSlide,
+			autoSlideInterval,
+			pauseOnHover,
 		}),
 		[
 			totalSlides,
@@ -62,6 +77,9 @@ export function CarouselContextProvider({
 			rollOverEnabled,
 			startingIndex,
 			carouselWidthInPixels,
+			autoSlide,
+			autoSlideInterval,
+			pauseOnHover,
 		]
 	);
 
