@@ -34,7 +34,6 @@ export const CarouselContext = createContext<CarouselContextType>({
 
 export function CarouselContextProvider({
 	children,
-	currentSlideIndex: currIndex = 0,
 	totalSlides: numberOfSlides = 0,
 	rollOverEnabled = false,
 	startingIndex = 0,
@@ -44,7 +43,6 @@ export function CarouselContextProvider({
 	pauseOnHover = true,
 }: {
 	children: React.ReactNode;
-	currentSlideIndex?: number;
 	totalSlides?: number;
 	rollOverEnabled?: boolean;
 	startingIndex?: number;
@@ -53,7 +51,7 @@ export function CarouselContextProvider({
 	autoSlideInterval?: number;
 	pauseOnHover?: boolean;
 }) {
-	const [currentSlideIndex, setCurrentSlideIndex] = useState(currIndex);
+	const [currentSlideIndex, setCurrentSlideIndex] = useState(startingIndex);
 	const [totalSlides, setTotalSlides] = useState(numberOfSlides);
 
 	const contextVal = useMemo(

@@ -11,7 +11,13 @@ import { useInterval } from "./hooks/useInterval";
 import { useIsomorphicLayoutEffect } from "./hooks/useIsomorphicLayoutEffect";
 import { nextSlide } from "./utils";
 
-export function SlidesContainer({ children }: { children: ReactNode }) {
+export function SlidesContainer({
+	children,
+	currentSlideIndex: customCurrentSlideIndex,
+}: {
+	children: ReactNode;
+	currentSlideIndex?: number | null;
+}) {
 	const direction = useRef("-"); // ref since we don't want to re-render the component
 	const {
 		setTotalSlides,
@@ -35,6 +41,15 @@ export function SlidesContainer({ children }: { children: ReactNode }) {
 	useIsomorphicLayoutEffect(() => {
 		setTotalSlides(totalSlides);
 	}, [setTotalSlides, totalSlides]);
+
+	useIsomorphicLayoutEffect(() => {
+		if (
+			customCurrentSlideIndex !== undefined &&
+			customCurrentSlideIndex !== null
+		) {
+			setCurrentSlideIndex(customCurrentSlideIndex);
+		}
+	}, [customCurrentSlideIndex]);
 
 	useEffect(() => {
 		const newTransformProperty = `translateX(${

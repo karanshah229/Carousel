@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Carousel } from "../src/components/Carousel";
 
 function DemoSlide({ children }: { children: ReactNode }) {
@@ -94,16 +94,36 @@ function Indicators() {
 }
 
 export function Carousel2() {
+	const [slideContents, setSlideContents] = useState([
+		"Test me",
+		"Test me 2",
+		"Test me 3",
+		"Test me 4",
+		"Test me 5",
+	]);
+	const [currentSlideIndex, setCurrentSlideIndex] = useState<number | null>(
+		null
+	);
+
+	useEffect(() => {
+		const id = setTimeout(() => {
+			setSlideContents([
+				"Test me 4",
+				"Test me 3",
+				"Test me 5",
+				"Test me",
+				"Test me 2",
+			]);
+			setCurrentSlideIndex(0);
+		}, 2000);
+
+		return () => clearTimeout(id);
+	}, []);
+
 	return (
-		<Carousel.Root widthInPixels={200}>
-			<Carousel.SlidesContainer>
-				{[
-					"Test me",
-					"Test me 2",
-					"Test me 3",
-					"Test me 4",
-					"Test me 5",
-				].map((val) => {
+		<Carousel.Root widthInPixels={200} startingIndex={2}>
+			<Carousel.SlidesContainer currentSlideIndex={currentSlideIndex}>
+				{slideContents.map((val) => {
 					return (
 						<Carousel.Slide key={val}>
 							<DemoSlide>{val}</DemoSlide>
