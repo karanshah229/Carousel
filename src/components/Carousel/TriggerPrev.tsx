@@ -1,17 +1,19 @@
-import React, { useContext } from "react";
+/* eslint-disable no-param-reassign */
+import React, { AllHTMLAttributes, useContext } from "react";
+
 import { CarouselContext } from "./CarouselContextProvider";
 import { composeEventHandlers, prevSlide } from "./utils";
 
-interface Props<T extends keyof JSX.IntrinsicElements> {
-	as: T;
+interface Props {
+	as: any;
 	children: React.ReactNode;
 }
 
-export function TriggerPrev<T extends keyof JSX.IntrinsicElements>({
+export function TriggerPrev({
 	as,
 	children,
 	...rest
-}: Props<T> & React.HTMLProps<JSX.IntrinsicElements[T]>) {
+}: Props & AllHTMLAttributes<HTMLElement>) {
 	const {
 		currentSlideIndex,
 		setCurrentSlideIndex,
@@ -29,6 +31,7 @@ export function TriggerPrev<T extends keyof JSX.IntrinsicElements>({
 	);
 
 	rest.disabled = currentSlideIndex === 0 && !rollOverEnabled;
+	(rest as any).isDisabled = currentSlideIndex === 0 && !rollOverEnabled;
 
 	return React.createElement(as, rest, children);
 }

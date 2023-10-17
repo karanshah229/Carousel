@@ -1,14 +1,13 @@
 # TODO
 
-1. Add support for HRButton, HRIconButton, any other HRDS component in Triggers.
-2. Performance Udpate on Indicators - Render too many times
-3. Performance Udpate on Context
-4. Performance Udpate on All Components of Carousel
-5. Transitions
+1. Performance Udpate on Indicators - Render too many times
+2. Performance Udpate on Context
+3. Performance Udpate on All Components of Carousel
+4. Transitions
     1. First slide to come after 3rd slide when rollOverEnabled
     2. On slide change - custom animation
     3. Support to add more animation / transitions
-6. A11y
+5. A11y
 
 # Features
 
