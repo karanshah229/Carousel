@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { isClient } from "../../../utils/common";
+import { isClient } from "../utils/common";
 
 /**
  * On the server, React emits a warning when calling `useLayoutEffect`.

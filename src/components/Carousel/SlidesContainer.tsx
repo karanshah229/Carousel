@@ -7,8 +7,8 @@ import {
 	useState,
 } from "react";
 import { CarouselContext } from "./CarouselContextProvider";
-import { useInterval } from "./hooks/useInterval";
-import { useIsomorphicLayoutEffect } from "./hooks/useIsomorphicLayoutEffect";
+import { useInterval } from "../../hooks/useInterval";
+import { useIsomorphicLayoutEffect } from "../../hooks/useIsomorphicLayoutEffect";
 import { nextSlide } from "./utils";
 
 export function SlidesContainer({
