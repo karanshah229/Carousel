@@ -40,7 +40,7 @@ export function CarouselContextProvider({
 	carouselWidthInPixels = 0,
 	autoSlide = false,
 	autoSlideInterval = 3000,
-	pauseOnHover = true,
+	pauseOnHover = false,
 }: {
 	children: React.ReactNode;
 	totalSlides?: number;

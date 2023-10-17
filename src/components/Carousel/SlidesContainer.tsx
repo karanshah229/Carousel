@@ -28,6 +28,7 @@ export function SlidesContainer({
 		carouselWidthInPixels,
 		autoSlide,
 		autoSlideInterval,
+		pauseOnHover,
 	} = useContext(CarouselContext);
 
 	const [transformProperty, setTransformProperty] = useState(
@@ -67,7 +68,9 @@ export function SlidesContainer({
 				setCurrentSlideIndex,
 			});
 		},
-		autoSlide && !hoveredOnSlideContainer ? autoSlideInterval : null
+		!autoSlide || (pauseOnHover && hoveredOnSlideContainer)
+			? null
+			: autoSlideInterval
 	);
 
 	return (

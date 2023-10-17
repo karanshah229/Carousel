@@ -31,7 +31,7 @@ export function Root({
 
 	if (autoSlide === true) {
 		autoSlideInterval = _autoSlideInterval || 3000;
-		pauseOnHover = _pauseOnHover || true;
+		pauseOnHover = _pauseOnHover || false;
 	}
 
 	return (
