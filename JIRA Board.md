@@ -1,23 +1,25 @@
 # TODO
 
-1. Performance Udpate on Indicators - Render too many times
-2. Performance Udpate on Context
-3. Performance Udpate on All Components of Carousel
-
-# Features
-
-1. ClassName prop on Root
-2. Custom Starting Index
-3. Auto Slide
-4. Pause on Hover
-5. Vertical Carousel
-6. RollOver
-7. Transitions
+1. Add support for HRButton, HRIconButton, any other HRDS component in Triggers.
+2. Performance Udpate on Indicators - Render too many times
+3. Performance Udpate on Context
+4. Performance Udpate on All Components of Carousel
+5. Transitions
     1. First slide to come after 3rd slide when rollOverEnabled
     2. On slide change - custom animation
     3. Support to add more animation / transitions
-8. Dynamic Updates to Slides
-    1. Slide order changes with transition
+6. A11y
+
+# Features
+
+-   [x] Flexible styling - accept className and style props
+-   [x] Custom Starting Index
+-   [x] Auto Slide
+-   [x] Pause on Hover
+-   [x] Vertical Carousel
+-   [x] RollOver
+-   [x] Dynamic Updates to Slides
+    -   [x] Slide order changes with transition
 
 # Validations
 

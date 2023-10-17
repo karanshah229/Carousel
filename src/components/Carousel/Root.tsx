@@ -26,8 +26,8 @@ export function Root({
 	autoSlideInterval: _autoSlideInterval,
 	pauseOnHover: _pauseOnHover,
 }: RootProps) {
-	let autoSlideInterval: number | undefined,
-		pauseOnHover: boolean | undefined;
+	let autoSlideInterval: number | undefined;
+	let pauseOnHover: boolean | undefined;
 
 	if (autoSlide === true) {
 		autoSlideInterval = _autoSlideInterval || 3000;

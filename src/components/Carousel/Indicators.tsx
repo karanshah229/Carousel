@@ -18,11 +18,13 @@ export function Indicators({
 	if (totalSlides === 1 && !showIndicatorIfOneSlide) return;
 	return (
 		<>
-			{[...Array(totalSlides).keys()].map((_, index) => {
-				return children(index, currentSlideIndex === index, () =>
-					setCurrentSlideIndex(index)
-				);
-			})}
+			{Array.from({ length: totalSlides }, (_, index) => index).map(
+				(_, index) => {
+					return children(index, currentSlideIndex === index, () =>
+						setCurrentSlideIndex(index)
+					);
+				}
+			)}
 		</>
 	);
 }
