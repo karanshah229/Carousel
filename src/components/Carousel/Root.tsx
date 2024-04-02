@@ -1,59 +1,62 @@
-import { ReactNode } from "react";
-import { CarouselContextProvider } from "./CarouselContextProvider";
+import { AllHTMLAttributes, ReactNode } from 'react';
 
-type Props =
-	| { autoSlide: true; autoSlideInterval?: number; pauseOnHover?: boolean }
-	| { autoSlide?: false; autoSlideInterval?: never; pauseOnHover?: never };
+import { CarouselContextProvider } from './CarouselContextProvider';
 
-type RootProps = Props & {
-	children: ReactNode;
-	widthInPixels: number;
-	className?: string;
-	rollOverEnabled?: boolean;
-	startingIndex?: number;
-	autoSlide?: boolean;
-	style?: object;
-};
+type Props1 =
+  | { autoSlide: true; autoSlideInterval?: number; pauseOnHover?: boolean }
+  | { autoSlide?: false; autoSlideInterval?: never; pauseOnHover?: never };
+
+type Props2 =
+  | { fullWidth: boolean; carouselWidthInPixels?: never }
+  | { carouselWidthInPixels: number; fullWidth?: never };
+
+type RootProps = Props1 &
+  Props2 & {
+    children: ReactNode;
+    className?: string;
+    rollOverEnabled?: boolean;
+    startingIndex?: number;
+    autoSlide?: boolean;
+    style?: object;
+  } & AllHTMLAttributes<HTMLDivElement>;
 
 export function Root({
-	children,
-	widthInPixels: carouselWidthInPixels,
-	className,
-	rollOverEnabled = false,
-	startingIndex = 0,
-	style = {},
-	autoSlide,
-	autoSlideInterval: _autoSlideInterval,
-	pauseOnHover: _pauseOnHover,
+  children,
+  fullWidth = false,
+  carouselWidthInPixels,
+  className,
+  rollOverEnabled = false,
+  startingIndex = 0,
+  style = {},
+  autoSlide,
+  autoSlideInterval,
+  pauseOnHover,
+  ...rest
 }: RootProps) {
-	let autoSlideInterval: number | undefined;
-	let pauseOnHover: boolean | undefined;
+  const rootWidth = carouselWidthInPixels > 0 ? carouselWidthInPixels : '100%';
 
-	if (autoSlide === true) {
-		autoSlideInterval = _autoSlideInterval || 3000;
-		pauseOnHover = _pauseOnHover || false;
-	}
-
-	return (
-		<CarouselContextProvider
-			rollOverEnabled={rollOverEnabled}
-			startingIndex={startingIndex}
-			carouselWidthInPixels={carouselWidthInPixels}
-			autoSlide={autoSlide}
-			autoSlideInterval={autoSlideInterval}
-			pauseOnHover={pauseOnHover}
-		>
-			<div
-				style={{
-					...style,
-					width: carouselWidthInPixels,
-					border: "solid",
-					overflow: "hidden",
-				}}
-				className={className}
-			>
-				{children}
-			</div>
-		</CarouselContextProvider>
-	);
+  return (
+    <CarouselContextProvider
+      rollOverEnabled={rollOverEnabled}
+      startingIndex={startingIndex}
+      carouselWidthInPixels={carouselWidthInPixels}
+      autoSlide={autoSlide}
+      autoSlideInterval={autoSlideInterval}
+      pauseOnHover={pauseOnHover}
+      fullWidth={fullWidth}
+    >
+      <div
+        style={{
+          ...style,
+          position: 'relative',
+          width: rootWidth,
+          overflow: 'hidden',
+        }}
+        className={className}
+        {...rest}
+      >
+        {children}
+      </div>
+    </CarouselContextProvider>
+  );
 }
