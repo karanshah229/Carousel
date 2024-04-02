@@ -28,6 +28,11 @@ jobs:
                   # list of files that changed across commits
                   fetch-depth: 0
 
+            - name: Setup PNPM
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8.8.0
+
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v4
               with:
