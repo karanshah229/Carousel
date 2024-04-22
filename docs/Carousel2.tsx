@@ -121,7 +121,7 @@ export function Carousel2() {
 	}, []);
 
 	return (
-		<Carousel.Root widthInPixels={200} startingIndex={2}>
+		<Carousel.Root carouselWidthInPixels={200} startingIndex={2}>
 			<Carousel.SlidesContainer currentSlideIndex={currentSlideIndex}>
 				{slideContents.map((val) => {
 					return (

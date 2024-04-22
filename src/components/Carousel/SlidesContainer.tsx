@@ -1,134 +1,196 @@
 import {
-  AllHTMLAttributes,
-  Children,
-  ReactNode,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+	AllHTMLAttributes,
+	Children,
+	ReactNode,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
-import { useInterval } from 'src/hooks/useInterval';
-import { composeMultipleEventHandlers } from 'src/utils/common';
+import { useInterval } from "../../hooks/useInterval";
+import { useResizeObserver } from "../../hooks/useResizeObserver";
+import { composeMultipleEventHandlers, debounce } from "../../utils/common";
 
-import { CarouselContext } from './CarouselContextProvider';
-import { nextSlide } from './utils';
+import { CarouselContext } from "./CarouselContextProvider";
+import { isIndexValidSlideIndex, nextSlide } from "./utils";
 
 export function SlidesContainer({
-  children,
-  currentSlideIndex: customCurrentSlideIndex,
-  style,
-  ...rest
+	children,
+	currentSlideIndex: customCurrentSlideIndex,
+	style,
+	...rest
 }: {
-  children: ReactNode;
-  currentSlideIndex?: number | null;
-  style?: object;
+	children: ReactNode;
+	currentSlideIndex?: number | null;
+	style?: object;
 } & AllHTMLAttributes<HTMLDivElement>) {
-  const direction = useRef('-'); // ref since we don't want to re-render the component
-  const lastSlideWidth = useRef(0); // ref since we don't want to re-render the component
-  const slidesContainerRef = useRef<HTMLDivElement>(null);
-  const {
-    totalSlides,
-    setTotalSlides,
-    rollOverEnabled,
-    currentSlideIndex,
-    setCurrentSlideIndex,
-    startingIndex,
-    carouselWidthInPixels: _carouselWidthInPixels,
-    autoSlide,
-    autoSlideInterval,
-    pauseOnHover,
-    fullWidth,
-  } = useContext(CarouselContext);
+	const isMounted = useRef(false);
+	const direction = useRef("-"); // ref since we don't want to re-render the component
+	const lastSlideWidth = useRef(0); // ref since we don't want to re-render the component
+	const slidesContainerRef = useRef<HTMLDivElement>(null);
+	const {
+		totalSlides,
+		setTotalSlides,
+		rollOverEnabled,
+		currentSlideIndex,
+		setCurrentSlideIndex,
+		startingIndex,
+		autoSlide,
+		autoSlideInterval,
+		pauseOnHover,
+		fullWidth,
+	} = useContext(CarouselContext);
 
-  const [carouselWidthInPixels, setCarouselWidthInPixels] = useState(
-    fullWidth ? 0 : _carouselWidthInPixels,
-  );
-  const [slideContainerWidth, setSlideContainerWidth] = useState(
-    slidesContainerRef.current?.scrollWidth || 0,
-  );
-  const [slideWidth, setSlideWidth] = useState(
-    slidesContainerRef.current?.getBoundingClientRect().width || 0,
-  );
+	const [slideContainerScrollWidth, setSlideContainerScrollWidth] = useState(
+		slidesContainerRef.current?.scrollWidth || 0
+	);
+	const [slideWidth, setSlideWidth] = useState(
+		// getBoundingClientRect - returns fractional values - can cause bug where one extra indicator is shown
+		// Math.round will smooth out these errors
+		Math.round(
+			slidesContainerRef.current?.getBoundingClientRect().width || 0
+		) || 0
+	);
 
-  const [transformProperty, setTransformProperty] = useState(
-    `translateX(${startingIndex * carouselWidthInPixels}px)`,
-  );
-  const [hoveredOnSlideContainer, setHoveredOnSlideContainer] = useState(false);
+	const [transformProperty, setTransformProperty] = useState(
+		`translateX(${startingIndex * slideWidth}px)`
+	);
+	const [hoveredOnSlideContainer, setHoveredOnSlideContainer] =
+		useState(false);
 
-  useEffect(() => {
-    if (fullWidth && slidesContainerRef.current) {
-      setCarouselWidthInPixels(slidesContainerRef.current.getBoundingClientRect().width);
-    }
-  }, [fullWidth]);
+	useResizeObserver<HTMLDivElement>(
+		slidesContainerRef,
+		debounce((target: HTMLDivElement) => {
+			setSlideContainerScrollWidth(target.scrollWidth);
+			setSlideWidth(Math.round(target.getBoundingClientRect().width));
+		}, 500)
+	);
 
-  useEffect(() => {
-    setSlideContainerWidth(slidesContainerRef.current?.scrollWidth || 0);
-    setSlideWidth(slidesContainerRef.current?.getBoundingClientRect().width || 0);
-  }, []);
+	useEffect(() => {
+		if (isMounted.current !== true) {
+			isMounted.current = true;
+		}
+	}, []);
 
-  useEffect(() => {
-    const totalSlidesCount =
-      fullWidth && slidesContainerRef.current && slideContainerWidth && slideWidth
-        ? Math.ceil(slideContainerWidth / slideWidth)
-        : Children.count(children);
-    setTotalSlides(totalSlidesCount);
-  }, [children, fullWidth, setTotalSlides, slideWidth, slideContainerWidth]);
+	useEffect(() => {
+		// Set slides container width and slide width
+		setSlideContainerScrollWidth(
+			slidesContainerRef.current?.scrollWidth || 0
+		);
+		setSlideWidth(
+			Math.round(
+				slidesContainerRef.current?.getBoundingClientRect().width || 0
+			) || 0
+		);
+	}, [children]);
 
-  useEffect(() => {
-    if (customCurrentSlideIndex !== undefined && customCurrentSlideIndex !== null) {
-      setCurrentSlideIndex(customCurrentSlideIndex);
-    }
-  }, [customCurrentSlideIndex, setCurrentSlideIndex]);
+	useEffect(() => {
+		// Set Current slide if totalSlides changes
+		setCurrentSlideIndex((c) => {
+			if (c >= 0 && c < totalSlides) return c;
+			if (c >= totalSlides && totalSlides > 0) return totalSlides - 1;
+			return 0;
+		});
+	}, [setCurrentSlideIndex, totalSlides]);
 
-  useEffect(() => {
-    lastSlideWidth.current = slideContainerWidth - (totalSlides - 1) * slideWidth;
-  }, [slideWidth, totalSlides, slideContainerWidth]);
+	useEffect(() => {
+		// Set total slides count
+		const totalSlidesCount =
+			fullWidth &&
+			slidesContainerRef.current &&
+			slideContainerScrollWidth &&
+			slideWidth
+				? Math.ceil(slideContainerScrollWidth / slideWidth)
+				: Children.count(children);
+		setTotalSlides(totalSlidesCount);
+	}, [
+		children,
+		fullWidth,
+		setTotalSlides,
+		slideWidth,
+		slideContainerScrollWidth,
+	]);
 
-  useEffect(() => {
-    // If last slide width is less than othen slides, need to remove the excess translateX
-    const lastSlideExcess =
-      currentSlideIndex === totalSlides - 1 ? slideWidth - lastSlideWidth.current : 0;
-    const newTransformProperty = `translateX(${rollOverEnabled ? direction.current : '-'}${
-      currentSlideIndex * carouselWidthInPixels - lastSlideExcess
-    }px)`;
-    setTransformProperty(newTransformProperty);
-  }, [currentSlideIndex, rollOverEnabled, carouselWidthInPixels, slideWidth, totalSlides]);
+	useEffect(() => {
+		// Set current slide index as starting index on mount
+		if (
+			isMounted.current === false &&
+			isIndexValidSlideIndex(startingIndex, totalSlides)
+		) {
+			setCurrentSlideIndex(startingIndex);
+		}
+	}, [setCurrentSlideIndex, startingIndex, totalSlides]);
 
-  useInterval(
-    () => {
-      nextSlide({
-        currentSlideIndex,
-        totalSlides,
-        rollOverEnabled,
-        setCurrentSlideIndex,
-      });
-    },
-    !autoSlide || (pauseOnHover && hoveredOnSlideContainer) ? null : autoSlideInterval,
-  );
+	useEffect(() => {
+		// Set current slide index as customCurrentSlideIndex if passed as prop
+		if (
+			customCurrentSlideIndex &&
+			isIndexValidSlideIndex(customCurrentSlideIndex, totalSlides)
+		) {
+			setCurrentSlideIndex(customCurrentSlideIndex);
+		}
+	}, [customCurrentSlideIndex, setCurrentSlideIndex, totalSlides]);
 
-  // Compose only the handlers we require
-  const composedMultipleEventHandlers = composeMultipleEventHandlers({
-    onMouseOver: [rest.onMouseOver, () => setHoveredOnSlideContainer(true)],
-    onFocus: [rest.onFocus, () => setHoveredOnSlideContainer(true)],
-    onMouseOut: [rest.onFocus, () => setHoveredOnSlideContainer(false)],
-    onBlur: [rest.onBlur, () => setHoveredOnSlideContainer(false)],
-  });
+	useEffect(() => {
+		// Set last slide width
+		lastSlideWidth.current =
+			slideContainerScrollWidth - (totalSlides - 1) * slideWidth;
+	}, [slideWidth, totalSlides, slideContainerScrollWidth]);
 
-  return (
-    <div
-      style={{
-        ...style,
-        display: 'flex',
-        width: carouselWidthInPixels > 0 ? carouselWidthInPixels : '100%',
-        transform: transformProperty,
-        transition: 'transform 300ms ease-out',
-      }}
-      {...rest}
-      {...composedMultipleEventHandlers}
-      ref={slidesContainerRef}
-    >
-      {children}
-    </div>
-  );
+	useEffect(() => {
+		// Transition to slide based on currentSlideIndex
+
+		// If last slide width is less than othen slides, need to remove the excess translateX
+		const lastSlideExcess =
+			currentSlideIndex === totalSlides - 1
+				? slideWidth - lastSlideWidth.current
+				: 0;
+
+		const newTransformProperty = `translateX(${rollOverEnabled ? direction.current : "-"}${
+			currentSlideIndex * slideWidth - lastSlideExcess
+		}px)`;
+
+		setTransformProperty(newTransformProperty);
+	}, [currentSlideIndex, rollOverEnabled, slideWidth, totalSlides]);
+
+	useInterval(
+		// Auto slide
+		() => {
+			nextSlide({
+				currentSlideIndex,
+				totalSlides,
+				rollOverEnabled,
+				setCurrentSlideIndex,
+			});
+		},
+		!autoSlide || (pauseOnHover && hoveredOnSlideContainer)
+			? null
+			: autoSlideInterval
+	);
+
+	// Compose only the handlers we require
+	const composedMultipleEventHandlers = composeMultipleEventHandlers({
+		onMouseOver: [rest.onMouseOver, () => setHoveredOnSlideContainer(true)],
+		onFocus: [rest.onFocus, () => setHoveredOnSlideContainer(true)],
+		onMouseOut: [rest.onFocus, () => setHoveredOnSlideContainer(false)],
+		onBlur: [rest.onBlur, () => setHoveredOnSlideContainer(false)],
+	});
+
+	return (
+		<div
+			style={{
+				...style,
+				display: "flex",
+				width: "100%",
+				transform: transformProperty,
+				transition: "transform 300ms ease-out",
+			}}
+			{...rest}
+			{...composedMultipleEventHandlers}
+			ref={slidesContainerRef}
+		>
+			{children}
+		</div>
+	);
 }
