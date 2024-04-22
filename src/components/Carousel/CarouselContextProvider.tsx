@@ -7,7 +7,6 @@ type CarouselContextType = {
   setTotalSlides: Dispatch<SetStateAction<number>>;
   rollOverEnabled: boolean;
   startingIndex: number;
-  carouselWidthInPixels: number;
   autoSlide: boolean;
   autoSlideInterval: number;
   pauseOnHover: boolean;
@@ -21,7 +20,6 @@ export const CarouselContext = createContext<CarouselContextType>({
   setTotalSlides: () => {},
   rollOverEnabled: false,
   startingIndex: 0,
-  carouselWidthInPixels: 0,
   autoSlide: false,
   autoSlideInterval: 3000,
   pauseOnHover: false,
@@ -33,7 +31,6 @@ export function CarouselContextProvider({
   totalSlides: numberOfSlides = 0,
   rollOverEnabled = false,
   startingIndex = 0,
-  carouselWidthInPixels = 0,
   autoSlide = false,
   autoSlideInterval = 3000,
   pauseOnHover = false,
@@ -43,7 +40,6 @@ export function CarouselContextProvider({
   totalSlides?: number;
   rollOverEnabled?: boolean;
   startingIndex?: number;
-  carouselWidthInPixels?: number;
   autoSlide?: boolean;
   autoSlideInterval?: number;
   pauseOnHover?: boolean;
@@ -60,7 +56,6 @@ export function CarouselContextProvider({
       setCurrentSlideIndex,
       rollOverEnabled,
       startingIndex,
-      carouselWidthInPixels,
       autoSlide,
       autoSlideInterval,
       pauseOnHover,
@@ -73,7 +68,6 @@ export function CarouselContextProvider({
       setCurrentSlideIndex,
       rollOverEnabled,
       startingIndex,
-      carouselWidthInPixels,
       autoSlide,
       autoSlideInterval,
       pauseOnHover,

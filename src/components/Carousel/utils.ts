@@ -35,3 +35,8 @@ export function prevSlide({
     return (c - 1 + totalSlides) % totalSlides;
   });
 }
+
+export function isIndexValidSlideIndex(index: number, totalSlides: number) {
+  if (index !== undefined && index !== null && index >= 0 && index < totalSlides - 1) return true;
+  return false;
+}

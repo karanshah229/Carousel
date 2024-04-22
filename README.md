@@ -1,5 +1,9 @@
 # Carousel
 
+## [![Super-Linter](https://github.com/karanshah229/Carousel/actions/workflows/ci/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
+---
+
 ## Features
 
 1. No UI + Great DevEx
